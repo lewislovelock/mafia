@@ -1,12 +1,13 @@
 import yaml
 import random
 from typing import List, Dict
-from prompts import PROMPTS_EN, PROMPTS_ZH
+from .prompts import PROMPTS_EN, PROMPTS_ZH
 
 # Default configuration
 DEFAULT_CONFIG = {
     "mode": "test",  # "test" or "arena"
-    "language": "en",  # "en" or "zh"
+    "language": "zh",  # "en" or "zh"
+    "enable_streaming": False,
     "num_players": 6,
     "roles": {
         "werewolf": 2,

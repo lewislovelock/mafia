@@ -32,15 +32,22 @@ Use your potions strategically. Timing is crucial.""",
     
     # Agent method prompts
     "think": """Context: {context}
+Current Round: {round}
+Game Settings: {game_intro}
+Your Identity: {player_name}
 
 Analyze the situation carefully. Consider:
 - Who appears suspicious and why?
 - What is your strategic approach?
 - What information can you deduce?
 
+IMPORTANT: If this is Round 1, there is NO prior history (no votes, no deaths). Do not hallucinate past events.
 Keep your analysis concise and focused.""",
     
     "speak": """Context: {context}
+Current Round: {round}
+Game Settings: {game_intro}
+Your Identity: {player_name}
 Your Reasoning: {thought_process}
 
 Speak to other players. You may:
@@ -51,12 +58,18 @@ Speak to other players. You may:
 Be concise and strategic. Limit: 30 words.""",
     
     "act_think": """Context: {context}
+Current Round: {round}
+Game Settings: {game_intro}
+Your Identity: {player_name}
 Task: {task}
 
 Analyze the situation thoroughly. What is the best course of action and why?
 Provide your strategic reasoning.""",
     
     "act_decide": """Context: {context}
+Current Round: {round}
+Game Settings: {game_intro}
+Your Identity: {player_name}
 Your Reasoning: {thought_process}
 
 Task: {task}
@@ -70,6 +83,9 @@ Keep it under 2 sentences.""",
     
     # Voting prompt
     "vote": """Context: {context}
+Current Round: {round}
+Game Settings: {game_intro}
+Your Identity: {player_name}
 Your Reasoning: {thought_process}
 
 Task: Vote to eliminate one player during the day discussion.
@@ -109,15 +125,22 @@ PROMPTS_ZH = {
     
     # Agent 方法提示词
     "think": """情境：{context}
+当前回合：{round}
+游戏设定：{game_intro}
+你的身份：{player_name}
 
 仔细分析局势。思考：
 - 谁看起来可疑？为什么？
 - 你的策略是什么？
 - 你能推断出什么信息？
 
+重要：如果是第1轮，没有历史记录（无投票、无死亡）。不要编造过去发生的事件。
 保持分析简洁、专注。""",
     
     "speak": """情境：{context}
+当前回合：{round}
+游戏设定：{game_intro}
+你的身份：{player_name}
 你的推理：{thought_process}
 
 对其他玩家发言。你可以：
@@ -128,12 +151,18 @@ PROMPTS_ZH = {
 简洁而有策略。限制：30字内。""",
     
     "act_think": """情境：{context}
+当前回合：{round}
+游戏设定：{game_intro}
+你的身份：{player_name}
 任务：{task}
 
 全面分析局势。最佳行动方案是什么？为什么？
 提供你的战略推理。""",
     
     "act_decide": """情境：{context}
+当前回合：{round}
+游戏设定：{game_intro}
+你的身份：{player_name}
 你的推理：{thought_process}
 
 任务：{task}
@@ -147,6 +176,9 @@ PROMPTS_ZH = {
     
     # 投票提示词
     "vote": """情境：{context}
+当前回合：{round}
+游戏设定：{game_intro}
+你的身份：{player_name}
 你的推理：{thought_process}
 
 任务：在白天讨论中投票淘汰一名玩家。

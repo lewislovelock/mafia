@@ -6,6 +6,9 @@ mode: test
 # Language: "en" (English) or "zh" (Chinese)
 language: zh
 
+# Enable streaming (typewriter effect)
+enable_streaming: true
+
 # Number of players (excluding God)
 num_players: 6
 

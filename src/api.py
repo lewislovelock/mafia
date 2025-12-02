@@ -3,8 +3,8 @@ import json
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from agents import Agent, God, Werewolf, Seer, Witch
-from game_engine import GameEngine
+from .agents import Agent, God, Werewolf, Seer, Witch
+from .game_engine import GameEngine
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ def init_game():
     print("Initializing Werewolf Arena...")
     
     # Load configuration
-    from config import GameConfig
+    from .config import GameConfig
     config = GameConfig("game_config.yaml")
     
     # Get prompts based on language

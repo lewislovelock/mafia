@@ -14,7 +14,7 @@ ROLE_EMOJIS = {
     "Seer": "🔮",
     "Witch": "🧙",
     "Villager": "👤",
-    "God": "⚡"
+    "God": "👀"
 }
 
 class GameViewer:
@@ -63,9 +63,9 @@ class GameViewer:
                     pass
                     
             elif event_type == "phase":
-                console.print(f"\n[bold yellow]{'━' * 70}[/]")
+                console.print(f"\n[bold yellow]{'━' * 90}[/]")
                 console.print(Panel(f"[bold yellow]{content}[/]", title="🎭 Phase", border_style="yellow"))
-                console.print(f"[bold yellow]{'━' * 70}[/]\n")
+                console.print(f"[bold yellow]{'━' * 90}[/]\n")
             return
         
         # Buffer thought, speech, action chunks
@@ -91,11 +91,11 @@ class GameViewer:
         emoji = self.get_emoji(agent)
         
         if event_type == "thought":
-            console.print(f"[dim italic cyan]💭 {emoji} {agent}: {content}[/]")
+            console.print(f"[dim italic cyan]💭 {emoji} {agent}: [bold italic blue]{content}[/]")
         elif event_type == "speech":
             console.print(f"[bold white]{emoji} {agent}:[/] [green]{content}[/]")
         elif event_type == "action":
-            console.print(f"[bold magenta]⚡ {emoji} {agent} → {content}[/]")
+            console.print(f"[bold magenta]⚙️ {emoji} {agent} → {content}[/]")
 
 async def fetch_role_mapping(viewer: GameViewer):
     """Fetch role mapping from API for God Mode"""

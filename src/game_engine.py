@@ -1,7 +1,7 @@
 import asyncio
 import json
 from typing import List, Dict, Optional
-from agents import Agent, God, Werewolf, Seer, Witch
+from .agents import Agent, God, Werewolf, Seer, Witch
 
 class GameEngine:
     def __init__(self, players: List[Agent]):
@@ -11,6 +11,19 @@ class GameEngine:
         self.roles = {p.name: p.role for p in players}
         self.event_queue = asyncio.Queue()
         self.is_game_over = False
+        self.round_number = 0
+        
+        # Generate game intro
+        player_names = ", ".join([p.name for p in players if p.role != "God"])
+        
+        # Count roles
+        role_counts = {}
+        for p in players:
+            if p.role != "God":
+                role_counts[p.role] = role_counts.get(p.role, 0) + 1
+        
+        role_desc = ", ".join([f"{count} {role}(s)" for role, count in role_counts.items()])
+        self.game_intro = f"Werewolf Game with {len(players)-1} players: {player_names}. Role distribution: {role_desc}."
         
         if not self.god:
             raise ValueError("Game must have a God agent.")
@@ -27,6 +40,8 @@ class GameEngine:
         await self.broadcast("system", "System", "Game Started")
         
         while not self.is_game_over:
+            self.round_number += 1
+            
             # Night Phase
             await self.run_night_phase()
             if self.check_game_over(): break
@@ -71,11 +86,11 @@ class GameEngine:
             
             # Think
             await self.broadcast("thought", speaker.name, "[Thinking...]")
-            async for chunk in speaker.think(context):
+            async for chunk in speaker.think(context, self.round_number, self.game_intro):
                 await self.broadcast("thought", speaker.name, chunk)
             
             # Speak
-            async for chunk in speaker.speak(context):
+            async for chunk in speaker.speak(context, self.round_number, self.game_intro):
                 await self.broadcast("speech", speaker.name, chunk)
             
             await asyncio.sleep(1.5)  # Rate limit protection between speakers
@@ -89,9 +104,9 @@ class GameEngine:
         for voter in voters:
             context = f"Alive players: {', '.join(self.alive_players)}. Based on today's discussion, who should be eliminated?"
             
-            vote = await voter.vote(context, broadcast_callback=self.broadcast)
+            vote = await voter.vote(context, self.round_number, self.game_intro, broadcast_callback=self.broadcast)
             votes[voter.name] = vote
-            await self.broadcast("action", voter.name, f"Voted for {vote}")
+            await self.broadcast("action", voter.name, f"Voted for {vote}\n")
             await asyncio.sleep(1)  # Rate limit protection
         
         # Count votes
@@ -117,9 +132,19 @@ class GameEngine:
         if not werewolves:
             return None
             
+        # Get all werewolf names for teammate awareness
+        all_wolf_names = [p.name for p in werewolves]
+            
         votes = []
         for wolf in werewolves:
-            vote = await wolf.kill(self.alive_players, teammate_votes=votes, broadcast_callback=self.broadcast)
+            vote = await wolf.kill(
+                self.alive_players, 
+                self.round_number, 
+                self.game_intro, 
+                teammates=all_wolf_names,
+                teammate_votes=votes, 
+                broadcast_callback=self.broadcast
+            )
             votes.append(vote)
             await asyncio.sleep(1)  # Rate limit protection
             
@@ -140,7 +165,7 @@ class GameEngine:
         if not seer:
             return
 
-        target_name = await seer.verify(self.alive_players, broadcast_callback=self.broadcast)
+        target_name = await seer.verify(self.alive_players, self.round_number, self.game_intro, broadcast_callback=self.broadcast)
         
         target_role = self.roles.get(target_name, "Unknown")
         seer.add_memory(f"You checked {target_name}: {target_role}.")
@@ -153,7 +178,7 @@ class GameEngine:
 
         night_info = f"Target attacked: {victim}." if victim else "No attack tonight."
         
-        decision = await witch.use_potion(night_info, broadcast_callback=self.broadcast)
+        decision = await witch.use_potion(night_info, self.round_number, self.game_intro, broadcast_callback=self.broadcast)
         
         parts = decision.split()
         action = parts[0].upper()
